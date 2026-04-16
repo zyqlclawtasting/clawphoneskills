@@ -18,13 +18,13 @@ description: 使用 lark-cli 搭建飞书自动回复与定时监控流程（联
    ```bash
    bash scripts/auth_login_stable.sh
    ```
-2. 跑一次“监控+判断+自动回复”验证闭环：
+2. 跑一次“监控+判断+自动回复”验证闭环（优先用当前登录用户信息做回归）：
    ```bash
-   python3 scripts/lark_auto_reply_once.py --user-query "李翔" --history-limit 50
+   python3 scripts/lark_auto_reply_once.py --user-query "<当前登录用户姓名>" --history-limit 50
    ```
-3. 需要群聊时改为：
+3. 需要群聊时改为（优先选当前用户已加入的群）：
    ```bash
-   python3 scripts/lark_auto_reply_once.py --chat-query "001小白鼠群" --history-limit 50
+   python3 scripts/lark_auto_reply_once.py --chat-query "<当前用户所在群聊关键词>" --history-limit 50
    ```
 
 ---
@@ -74,6 +74,7 @@ description: 使用 lark-cli 搭建飞书自动回复与定时监控流程（联
 - `lark-cli im +messages-send --as user --user-id ... --text ...`
 - 或 `--chat-id ...`
 - 推荐末尾固定加：`（本条消息由 ClawPhone 助手代发）`
+- **安全约束**：若目标不是“当前对话已明确要求自动发送”的场景，先输出待发送草稿并向用户确认（尤其群聊发送）。
 
 ### Step 6) 线下接力与闭环
 当对方明确给出“后续需在线下渠道办理（如街道/社区）”时：
@@ -122,10 +123,10 @@ description: 使用 lark-cli 搭建飞书自动回复与定时监控流程（联
 ### `scripts/lark_auto_reply_once.py`
 单次执行“解析目标 -> 拉消息 -> 判定 -> 去重 -> 自动回复”。
 
-示例：
+示例（请替换为当前登录用户与其所在群聊，不再使用固定人名/群名）：
 ```bash
 python3 scripts/lark_auto_reply_once.py \
-  --user-query "李翔" \
+  --user-query "<当前登录用户姓名>" \
   --history-limit 50 \
   --keywords "自动回复,怎么实现,流程,卡住" \
   --signature "（本条消息由 ClawPhone 助手代发）"
